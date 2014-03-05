@@ -8,12 +8,12 @@ public interface ProductDao {
 	public int insertProduct(Product p);
 	public int insertProductCatalog(String type);
 	public List<Product> findAllProduct();
-	public List<Product> findProductByUser(String user_id); 
-	public List<Product> findProductByCatalog(String type);
-	public int updateProductQuantity(String pid, int quantity);
+	public List<Product> findProductByUser(int user_id); 
+	public List<Product> findProductByCatalog(int catalog_id);
+	public int updateProductQuantity(int pid, int quantity);
 	
 	
-	public int deleteProductFromShoppingCart(String product_id);
-	public List<Product> findProductFromShoppingCart(String user_id);
-	public int insertProductsIntoShoppingCart(Product p);
+	public int deleteProductFromShoppingCart(int product_id);
+	public List<Product> findProductFromShoppingCart(int user_id);
+	public int insertProductsIntoShoppingCart(int buyer_id ,Product p);
 }

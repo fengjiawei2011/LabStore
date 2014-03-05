@@ -8,7 +8,7 @@ $(document).ready(function() {
 		//var jsObj = $login_form.serializeObject();
 		var ajaxObj = {
 			type : "POST",
-			url : "http://localhost:8080/LabStore/myrest/userservice/signup",
+			url : "http://localhost:8080/LabStore/myrest/userservice/signin",
 			dataType : "json",
 			data : JSON.stringify($('#login_form').serializeObject()),
 			contentType:"application/json",

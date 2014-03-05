@@ -56,7 +56,11 @@ public class MySQL {
 		}
 
 	}
-
+	public static void closeAllConnection(ResultSet rs, Statement ps , Connection con){
+		MySQL.closeStatement(ps);
+		MySQL.closeResultSet(rs);
+		MySQL.closeConnection(con);
+	}
 
 	public String getTable() {
 		return table;
