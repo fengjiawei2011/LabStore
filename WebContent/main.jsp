@@ -9,8 +9,7 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/home.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/polyfill.js"></script>
-<script type="text/javascript">
-</script>
+
 </head>
 <body>
 <h1><a>my shopping cart: ${sc_num} </a></h1>

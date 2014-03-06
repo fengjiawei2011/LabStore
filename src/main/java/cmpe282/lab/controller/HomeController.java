@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -15,7 +16,6 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import cmpe282.lab.bean.Product;
 import cmpe282.lab.bean.ShoppingCart;
@@ -35,17 +35,20 @@ public class HomeController {
 	@Path("/signup")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	public Response signUp(String data) throws JsonParseException, JsonMappingException, IOException, JSONException  {
-		System.out.println(data);
-		//JSONArray jsonA = new JSONArray(data);
-		JSONObject json = new JSONObject(data);
-
-//		ObjectMapper mapper = new ObjectMapper();  
-//		UserBean user = mapper.readValue(data, UserBean.class);
-
-		System.out.println("json-->"+ json.toString());
+	public Response signUp(@FormParam("firstname") String firstname, 
+			@FormParam("lastname") String lastname , 
+			@FormParam("password") String password,
+			@FormParam("email") String email) throws JsonParseException, JsonMappingException, IOException, JSONException  {
+	
+		UserDao ud = new UserDaoImpl();
+		User user = new User();
+		user.setEmail(email);
+		user.setFirst_name(firstname);
+		user.setLast_name(lastname);
+		user.setPassword(password);
+		ud.insertUser(user);
 		
-		return Response.ok(json.toString()).build();
+		return Response.ok().entity("successfully Sign up !").build();
 	}
 
 	@POST
@@ -88,6 +91,14 @@ public class HomeController {
 	public Response home(){
 		System.out.println("i am in home");
 		Viewable view = new Viewable("/login.html",null);
+		return  Response.ok().entity(view).build();
+	}
+	
+	@GET
+	@Path("/register")
+	public Response register(){
+		System.out.println("i am in register");
+		Viewable view = new Viewable("/signup.jsp",null);
 		return  Response.ok().entity(view).build();
 	}
 	  
