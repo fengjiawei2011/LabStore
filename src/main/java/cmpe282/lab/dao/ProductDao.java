@@ -16,4 +16,5 @@ public interface ProductDao {
 	public int deleteProductFromShoppingCart(int product_id);
 	public List<Product> findProductFromShoppingCart(int user_id);
 	public int insertProductsIntoShoppingCart(int buyer_id ,Product p);
+	public int getProducts_num(int user_id);
 }

@@ -1,7 +1,6 @@
 package cmpe282.lab.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -11,13 +10,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import cmpe282.lab.bean.Product;
+import cmpe282.lab.bean.ShoppingCart;
+import cmpe282.lab.bean.User;
+import cmpe282.lab.dao.ProductDao;
+import cmpe282.lab.dao.UserDao;
+import cmpe282.lab.dao.impl.ProductDaoImpl;
+import cmpe282.lab.dao.impl.UserDaoImpl;
 
 import com.sun.jersey.api.view.Viewable;
 
@@ -50,24 +56,51 @@ public class HomeController {
 			@FormParam("firstname") String firstname, 
 			@FormParam("lastname") String lastname , 
 			@FormParam("password") String password,
-			@FormParam("email") String email){
+			@FormParam("email") String email) throws Exception{
 		//other method to get parameter from html page with  MultivaluedMap< K, V>
 		//List<String> firstname = form.get("firstname");
+		System.out.println("in singin");
+		UserDao userDao = new UserDaoImpl();
+		ProductDao productDao = new ProductDaoImpl();
+		User user = userDao.findUser(lastname, firstname, email, password);
 		
-		request.setAttribute("firstname", firstname);
-		request.setAttribute("lastname", lastname);
-		request.setAttribute("password", password);
-		request.setAttribute("email", email);
+		Viewable view = null ;
+		if(user == null){
+			request.setAttribute("illegalUser", " wrong user information, please try again! ");
+			view = new Viewable("/login.html",null);
+			return Response.ok().entity(view).build();
+		}
 		
-		Viewable view = new Viewable("/main.jsp",null);
+		System.out.println("user_id = "+user.getUser_id());
+//		request.setAttribute("firstname", firstname);
+//		request.setAttribute("lastname", lastname);
+//		request.setAttribute("password", password);
+//		request.setAttribute("email", email);
+		request.setAttribute("legalUser", user);
+		request.setAttribute("sc_num",productDao.getProducts_num(user.getUser_id()));
+		
+		request.setAttribute( "products", productDao.findAllProduct());
+		view = new Viewable("/main.jsp",null);
 		return Response.ok().entity(view).build();
 	}
 	
 	@Path("/home")
-	public String home(){
-		
-		return "";
+	public Response home(){
+		System.out.println("i am in home");
+		Viewable view = new Viewable("/login.html",null);
+		return  Response.ok().entity(view).build();
 	}
+	  
+	
+	public void signUp(User user){}
+	public void singOut(User user){}
+	public void createProductCatalogs(String name){}
+	public void addNewProducts(String catalog){}
+	public void showProductsByCatalog(String catalog){}
+	public void getProductsFromSC(User user){}
+	public void addProductIntoSC(Product product){}
+	public void removeProductOutOfSC(Product product){}
+	public void Checkout(ShoppingCart sc){}
 	
 
 }
