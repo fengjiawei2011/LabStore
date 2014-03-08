@@ -103,12 +103,13 @@ public class HomeController {
 	}
 	  
 	
-	public void signUp(User user){}
+	
 	public void singOut(User user){}
+	
 	public void createProductCatalogs(String name){}
 	public void addNewProducts(String catalog){}
 	public void showProductsByCatalog(String catalog){}
-	public void getProductsFromSC(User user){}
+	//public void getProductsFromSC(User user){}
 	public void addProductIntoSC(Product product){}
 	public void removeProductOutOfSC(Product product){}
 	public void Checkout(ShoppingCart sc){}

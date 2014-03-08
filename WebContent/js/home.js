@@ -57,7 +57,7 @@ var add = function(id) {
 
 	$.ajax({
 		type : "POST",
-		url : "myrest/sc/add",
+		url : "http://localhost:8080/LabStore/myrest/sc/add",
 		dataType : "json",
 		data : JSON.stringify(toJson),
 		contentType : "application/json",

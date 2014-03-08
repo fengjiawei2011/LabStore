@@ -17,4 +17,6 @@ public interface ProductDao {
 	public List<Product> findProductFromShoppingCart(int user_id);
 	public int insertProductsIntoShoppingCart(int buyer_id ,Product p);
 	public int getProducts_num(int user_id);
+	public int doesProductExist(int uid, int pid);
+	public int updateProductNumInSC(int uid, int pid, int num);
 }

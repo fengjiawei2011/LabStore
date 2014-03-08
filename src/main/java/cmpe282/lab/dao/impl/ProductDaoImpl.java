@@ -15,15 +15,22 @@ import cmpe282.lab.database.AWSDynamoDB;
 import cmpe282.lab.database.AmazonStoreSchema;
 import cmpe282.lab.database.MySQL;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemResult;
 
 public class ProductDaoImpl implements ProductDao {
 
@@ -46,7 +53,10 @@ public class ProductDaoImpl implements ProductDao {
 		// pd.insertProductsIntoShoppingCart(3, p);
 		// pd.findProductFromShoppingCart(1);
 		// pd.updateProductQuantity(1,8);
-		pd.deleteProductFromShoppingCart(0);
+		//pd.deleteProductFromShoppingCart(0);
+		
+		//pd.doesProductExist(5,3);
+		pd.updateProductNumInSC(5,3,1);
 
 		// if(pd.insertProduct(p) == 1){
 		// System.out.println("succ");
@@ -253,6 +263,10 @@ public class ProductDaoImpl implements ProductDao {
 		System.out.println(products.get(0).getProduct_description());
 		return products;
 	}
+	
+	public void findUserByPID_UID(int pid, int uid){
+		
+	}
 
 	private static Product printItem(Map<String, AttributeValue> attributeList) {
 		Product p = new Product();
@@ -274,14 +288,14 @@ public class ProductDaoImpl implements ProductDao {
 				p.setOwner_id(Integer.parseInt(value.getN()));
 			if (attributeName.equals("product_description"))
 				p.setProduct_description(value.getS());
-			// System.out.println(attributeName + " "
-			// + (value.getS() == null ? "" : "S=[" + value.getS() + "]")
-			// + (value.getN() == null ? "" : "N=[" + value.getN() + "]")
-			// + (value.getB() == null ? "" : "B=[" + value.getB() + "]")
-			// + (value.getSS() == null ? "" : "SS=[" + value.getSS() + "]")
-			// + (value.getNS() == null ? "" : "NS=[" + value.getNS() + "]")
-			// + (value.getBS() == null ? "" : "BS=[" + value.getBS() +
-			// "] \n"));
+			 System.out.println(attributeName + " "
+			 + (value.getS() == null ? "" : "S=[" + value.getS() + "]")
+			 + (value.getN() == null ? "" : "N=[" + value.getN() + "]")
+			 + (value.getB() == null ? "" : "B=[" + value.getB() + "]")
+			 + (value.getSS() == null ? "" : "SS=[" + value.getSS() + "]")
+			 + (value.getNS() == null ? "" : "NS=[" + value.getNS() + "]")
+			 + (value.getBS() == null ? "" : "BS=[" + value.getBS() +
+			 "] \n"));
 		}
 
 		return p;
@@ -351,6 +365,59 @@ public class ProductDaoImpl implements ProductDao {
 		ScanResult scanResult = AWSDynamoDB.dynamoDB.scan(scanRequest);
 
 		return scanResult.getItems().size();
+	}
+
+	@Override
+	public  int doesProductExist(int uid, int pid) {
+		
+		
+		Condition condition_pid = new Condition().
+				withComparisonOperator(ComparisonOperator.EQ).
+				withAttributeValueList(new AttributeValue().withN(Integer.toString(pid)));
+		Condition condition_uid = new Condition().
+				withComparisonOperator(ComparisonOperator.EQ).
+				withAttributeValueList(new AttributeValue().withN(Integer.toString(uid)));
+		Map<String, Condition> keyconditions = new HashMap<String, Condition>();
+		keyconditions.put("product_id", condition_pid);
+		keyconditions.put("buyer_id", condition_uid);
+		
+		QueryRequest queryRequest = new QueryRequest()
+        .withTableName(AWSDynamoDB.table_name)
+        .withKeyConditions(keyconditions);
+		QueryResult result = AWSDynamoDB.dynamoDB.query(queryRequest);
+		for (Map<String, AttributeValue> item : result.getItems()) {
+			Product p = printItem(item);
+			return p.getProduct_quantity();
+		}
+
+		return 0;
+	}
+
+	@Override
+	public int updateProductNumInSC(int uid, int pid, int num) {
+		
+//		Condition condition_pid = new Condition().
+//				withComparisonOperator(ComparisonOperator.EQ).
+//				withAttributeValueList(new AttributeValue().withN(Integer.toString(pid)));
+//		Condition condition_uid = new Condition().
+//				withComparisonOperator(ComparisonOperator.EQ).
+//				withAttributeValueList(new AttributeValue().withN(Integer.toString(uid)));
+//		Map<String, Condition> keyconditions = new HashMap<String, Condition>();
+		Map<String, AttributeValueUpdate> updateItems = new HashMap<String, AttributeValueUpdate>();
+		updateItems.put("product_quantity", 
+				  new AttributeValueUpdate()
+				    .withAction(AttributeAction.ADD)
+				    .withValue(new AttributeValue().withN(Integer.toString(num))));
+		Map<String, AttributeValue> keys = new HashMap<String, AttributeValue>();
+		keys.put("product_id", new AttributeValue().withN(Integer.toString(pid)));
+		keys.put("buyer_id", new AttributeValue().withN(Integer.toString(uid)));
+		UpdateItemRequest updateItemRequest = new UpdateItemRequest()
+		  .withTableName(AWSDynamoDB.table_name)
+		  .withKey(keys).withReturnValues(ReturnValue.UPDATED_NEW)
+		  .withAttributeUpdates(updateItems);
+		            
+		UpdateItemResult result = AWSDynamoDB.dynamoDB.updateItem(updateItemRequest);
+		return 0;
 	}
 
 }
