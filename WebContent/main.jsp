@@ -13,6 +13,11 @@
 </head>
 <body>
 <h1><a href="http://localhost:8080/LabStore/myrest/sc/get-sc/${legalUser.getUser_id()}?lastname=${legalUser.getLast_name()}&firstname=${legalUser.getFirst_name()}">my shopping cart: ${sc_num} </a></h1>
+<h1><a>add new catalog</a></h1>
+<h1><a>add new product</a></h1><hr>
+<h1>Catalog: </h1>
+
+<hr>
 <h1> ALL Products</h1>
 <c:forEach var="product" items="${products}"> 
 <div>

@@ -126,10 +126,14 @@ public class ShoppingCartController {
 		products = pdao.findProductFromShoppingCart(uid);
 		PaymentDao pydao = new PaymentDaoImpl();
 		for(Product p:products ){
-			if(pydao.insertPaymentRecord(p.getProduct_id(), uid, cardnumber) == 1) System.out.println("pay success");;
+			if(pydao.insertPaymentRecord(p.getProduct_id(), uid, cardnumber) == 1){
+				int quantity = pdao.getProductQuantity(p.getProduct_id());
+				pdao.updateProductQuantity(p.getProduct_id(), quantity - p.getProduct_quantity());
+				System.out.println("pay success");
+			}
 		}
 		//Viewable view = new Viewable("/bill.jsp",null);
-		return "success";
+		return "pay successfuly";
 	}
 
 }

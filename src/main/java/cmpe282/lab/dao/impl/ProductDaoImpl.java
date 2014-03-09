@@ -181,6 +181,33 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
+	public int getProductQuantity(int pid){
+		MySQL mysql = new MySQL();
+		Connection con = mysql.connectDatabase();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		int quantity = 0;
+		try {
+			ps = con.prepareStatement("select product_quantity from "
+					+ AmazonStoreSchema.TABLE_PRODUCT + " where product_id = ?");
+			ps.setInt(1, pid);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				quantity = rs.getInt("product_quantity");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("error");
+			return -1;
+		} finally {
+			MySQL.closeAllConnection(rs, ps, con);
+		}
+		
+		return quantity;
+	}
+
+	@Override
 	public List<Product> findProductByCatalog(int catalog_id) {
 		List<Product> products = null;
 		MySQL mysql = new MySQL();
@@ -421,5 +448,6 @@ public class ProductDaoImpl implements ProductDao {
 		UpdateItemResult result = AWSDynamoDB.dynamoDB.updateItem(updateItemRequest);
 		return 0;
 	}
+	
 
 }

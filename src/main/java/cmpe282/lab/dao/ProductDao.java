@@ -11,7 +11,7 @@ public interface ProductDao {
 	public List<Product> findProductByUser(int user_id); 
 	public List<Product> findProductByCatalog(int catalog_id);
 	public int updateProductQuantity(int pid, int quantity);
-	
+	public int getProductQuantity(int pid);
 	
 	public int deleteProductFromShoppingCart(int product_id, int user_id);
 	public List<Product> findProductFromShoppingCart(int user_id);

@@ -8,6 +8,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -17,8 +18,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jettison.json.JSONException;
 
-import cmpe282.lab.bean.Product;
-import cmpe282.lab.bean.ShoppingCart;
 import cmpe282.lab.bean.User;
 import cmpe282.lab.dao.ProductDao;
 import cmpe282.lab.dao.UserDao;
@@ -97,13 +96,40 @@ public class HomeController {
 		Viewable view = new Viewable("/signup.jsp",null);
 		return  Response.ok().entity(view).build();
 	}
-	  
+	 
+
+	@GET
+	@Path("/addcatalog/{cname}")
+	public Response addCatalolg(@PathParam("cname") String cname) throws Exception{
+		System.out.println("in add catalog");
+		ProductDao p = new ProductDaoImpl();
+		if(p.insertProductCatalog(cname) ==1) return  Response.status(200).build();
+		else return  Response.ok().entity("fail to add Catalog").build();
+	}
 	
+
+	@GET
+	@Path("/show/{cid}")
+	public Response show(@PathParam("cid")  int cid) throws Exception{
+		System.out.println("in add catalog");
+		ProductDao p = new ProductDaoImpl(); 
+		p.findProductByCatalog(cid);
+		// use JSON to pass parameters
+		return  Response.ok().entity("").build();
+	}
+	
+	@GET
+	@Path("/addnewproduct")
+	public Response addNewProduct(String data){
+		
+		
+		return  Response.ok().entity("").build();
+	}
 	
 	public void singOut(User user){}
-	public void createProductCatalogs(String name){}
+	//public void createProductCatalogs(String name){}
 	public void addNewProducts(String catalog){}
-	public void showProductsByCatalog(String catalog){}
+	//public void showProductsByCatalog(String catalog){}
 	//public void getProductsFromSC(User user){}
 	//public void addProductIntoSC(Product product){}
 	//public void removeProductOutOfSC(Product product){}
