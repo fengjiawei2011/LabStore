@@ -50,7 +50,7 @@ public class HomeController {
 		
 		return Response.ok().entity("successfully Sign up !").build();
 	}
-
+	
 	@POST
 	@Path("/signin")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -74,11 +74,7 @@ public class HomeController {
 			return Response.ok().entity(view).build();
 		}
 		
-		System.out.println("user_id = "+user.getUser_id());
-//		request.setAttribute("firstname", firstname);
-//		request.setAttribute("lastname", lastname);
-//		request.setAttribute("password", password);
-//		request.setAttribute("email", email);
+		//System.out.println("user_id = "+user.getUser_id());
 		request.setAttribute("legalUser", user);
 		request.setAttribute("sc_num",productDao.getProducts_num(user.getUser_id()));
 		
@@ -87,7 +83,7 @@ public class HomeController {
 		return Response.ok().entity(view).build();
 	}
 	
-	@Path("/home")
+	@Path("/login")
 	public Response home(){
 		System.out.println("i am in home");
 		Viewable view = new Viewable("/login.html",null);
@@ -105,14 +101,13 @@ public class HomeController {
 	
 	
 	public void singOut(User user){}
-	
 	public void createProductCatalogs(String name){}
 	public void addNewProducts(String catalog){}
 	public void showProductsByCatalog(String catalog){}
 	//public void getProductsFromSC(User user){}
-	public void addProductIntoSC(Product product){}
-	public void removeProductOutOfSC(Product product){}
-	public void Checkout(ShoppingCart sc){}
+	//public void addProductIntoSC(Product product){}
+	//public void removeProductOutOfSC(Product product){}
+	//public void Checkout(ShoppingCart sc){}
 	
 
 }

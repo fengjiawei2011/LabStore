@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,8 +18,10 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONObject;
 
 import cmpe282.lab.bean.Product;
+import cmpe282.lab.dao.PaymentDao;
 import cmpe282.lab.dao.ProductDao;
 import cmpe282.lab.dao.UserDao;
+import cmpe282.lab.dao.impl.PaymentDaoImpl;
 import cmpe282.lab.dao.impl.ProductDaoImpl;
 import cmpe282.lab.dao.impl.UserDaoImpl;
 
@@ -82,8 +85,51 @@ public class ShoppingCartController {
 		request.setAttribute( "firstname", firstname);
 		request.setAttribute( "products", products);
 		Viewable view = new Viewable("/sc.jsp",null);
-		return Response.ok().entity(view).build();
+		return Response.ok().entity(view).build();	
+	}
+	
+
+
+	
+	@POST
+	@Path("/remove/{pid}")
+	public String  removePrductInSC(@PathParam("pid") int pid
+			,@QueryParam("buyerid") int buyerid) throws Exception{
 		
+		ProductDao pdao = new ProductDaoImpl();
+		pdao.deleteProductFromShoppingCart(pid,buyerid);
+		return "success";
+	}
+	
+	@GET
+	@Path("/checkout/{uid}")
+	public Response checkout(@Context HttpServletRequest request,  @PathParam("uid") int uid) throws Exception{
+		ProductDao pdao = new ProductDaoImpl();
+		List<Product> products = new ArrayList<Product>();
+		products = pdao.findProductFromShoppingCart(uid);
+		float total = 0.0f;
+		for(Product p : products){
+			total += p.getProduct_price();
+		}
+		request.setAttribute("uid", uid);
+		request.setAttribute("total", total);
+		request.setAttribute("products", products);
+		Viewable view = new Viewable("/bill.jsp",null);
+		return Response.ok().entity(view).build();	
+	}
+	@POST
+	@Path("/pay/{uid}")
+	@Consumes("application/x-www-form-urlencoded")
+	public String placeOrder(@PathParam("uid") int uid, @FormParam("cardnumber") String cardnumber) throws Exception{
+		ProductDao pdao = new ProductDaoImpl();
+		List<Product> products = new ArrayList<Product>();
+		products = pdao.findProductFromShoppingCart(uid);
+		PaymentDao pydao = new PaymentDaoImpl();
+		for(Product p:products ){
+			if(pydao.insertPaymentRecord(p.getProduct_id(), uid, cardnumber) == 1) System.out.println("pay success");;
+		}
+		//Viewable view = new Viewable("/bill.jsp",null);
+		return "success";
 	}
 
 }

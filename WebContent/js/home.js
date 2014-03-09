@@ -34,6 +34,9 @@ $(document).ready(
 
 		});
 
+
+
+
 var add = function(id) {
 	console.log(id);
 	var price = $("#" + id + "_price").text();

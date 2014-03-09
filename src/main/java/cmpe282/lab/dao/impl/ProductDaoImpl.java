@@ -230,10 +230,12 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
-	public int deleteProductFromShoppingCart(int product_id) {
+	public int deleteProductFromShoppingCart(int product_id,int user_id) {
 		HashMap<String, AttributeValue> key = new HashMap<String, AttributeValue>();
 		key.put("product_id",
 				new AttributeValue().withN(Integer.toString(product_id)));
+		key.put("buyer_id", new AttributeValue().withN(Integer.toString(user_id)));
+		
 
 		DeleteItemRequest deleteItemRequest = new DeleteItemRequest()
 				.withTableName(AWSDynamoDB.table_name).withKey(key);
